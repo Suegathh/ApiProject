@@ -2,6 +2,7 @@
   "name": "apiproject",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node --env-file=.env index.js",
     "dev": "node --watch --trace-warnings --env-file=.env index.js"

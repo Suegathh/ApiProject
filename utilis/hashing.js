@@ -1,6 +1,7 @@
-const { hash, compare } = require("bcryptjs");
-// Hash a value with a salt value
-exports.doHash = async (value, saltValue) => {
+import pkg from 'bcryptjs'
+const { hash, compare } = pkg;
+import {createHmac} from 'crypto';
+export const doHash = async (value, saltValue) => {
     try {
         const result = await hash(value, saltValue);
         return result;
@@ -10,7 +11,7 @@ exports.doHash = async (value, saltValue) => {
     }
 };
 // Validate a value against a hashed value
-exports.doHashValidation = async (value, hashedValue) => {
+export const doHashValidation = async (value, hashedValue) => {
     try {
         const result = await compare(value, hashedValue);
         return result;
@@ -19,3 +20,7 @@ exports.doHashValidation = async (value, hashedValue) => {
         throw error; // Re-throw the error to handle it where this function is called
     }
 };
+export const hmacProcess = (value, key) => {
+    const result = createHmac('256', key).update(value).digest('hex')
+    return result
+}

@@ -1,8 +1,11 @@
-const express = require('express')
-const authController = require('../controllers/authController')
-const router = express.Router()
+import express from 'express';
+import { signup, signin, signout, sendVerificationCode} from '../controllers/authController.js';
 
-router.post('/signup', authController.signup)
-router.post('/signin', authController.signin)
-router.post('/signout', authController.signout)
-module.exports = router
+const router = express.Router();
+
+router.post('/signup', signup);
+router.post('/signin', signin);
+router.post('/signout', signout);
+
+router.patch('/send-verificationCode', sendVerificationCode);
+export default router;

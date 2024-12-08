@@ -1,6 +1,6 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
-exports.signupSchema = Joi.object({
+export const signupSchema = Joi.object({
     email: Joi.string()
         .min(8)
         .max(60)
@@ -13,7 +13,7 @@ exports.signupSchema = Joi.object({
         .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$'))
 });
 
-exports.signinSchema = Joi.object({
+export const signinSchema = Joi.object({
     email: Joi.string()
         .min(8)
         .max(60)

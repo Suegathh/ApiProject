@@ -1,10 +1,11 @@
-const jwt = require('jsonwebtoken');
-const { signinSchema } = require('../middlewares/validator');
-const { signupSchema } = require('../middlewares/validator');
-const User = require('../models/usersModels');
-const { doHash, doHashValidation } = require('../utilis/hashing');
+import jwt from 'jsonwebtoken';
+import { signinSchema } from '../middlewares/validator.js';
+import { signupSchema } from '../middlewares/validator.js';
+import User from '../models/usersModels.js';
+import { doHash, doHashValidation, hmacProcess } from '../utilis/hashing.js';
+import transport from '../middlewares/sendMail.js';
 
-exports.signup = async (req, res) => {
+export const signup = async (req, res) => {
     const { email, password } = req.body;
 
     try {
@@ -49,7 +50,7 @@ exports.signup = async (req, res) => {
     }
 };
 
-exports.signin = async (req, res) => {
+export const signin = async (req, res) => {
     const { email, password } = req.body;
     try {
         // Validate input
@@ -107,9 +108,57 @@ exports.signin = async (req, res) => {
     }
 };
 
-exports.signout = async (req, res) => {
+export const signout = async (req, res) => {
     res.clearCookie('Authorization').status(200).json({
         success: true,
         message: 'Logged out successfully'
     });
 };
+
+export const sendVerificationCode = async(req, res) => {
+    const{email} = req.body
+    try {
+        const existingUser = await User.findOne({email})
+        if (!existingUser) {
+            return res.status(404).json({
+                success: false,
+                message: 'User does not exist',
+            });
+        }
+        if(existingUser.verified){
+           
+                return res.status(400).json({
+                    success: false,
+                    message: 'You are already verified!',
+                });
+            }
+
+            const codeValue = Math.floor(Math.random() * 1000000).toString
+            let info = await transport.sendMail({
+            from: process.env.NODE_CODE_SENDING_EMAIL_ADDRESS,
+            to: existingUser.email,
+            subject: "Verification Code",
+            html: '<h1>' + codeValue + '</h1>'
+        })
+
+        if(info.accepted[0] === existingUser.email){
+            const hashedCodeValue = hmacProcess(codeValue, process.env.HMAC_VERIFICATION_SECRET)
+            existingUser.verificationCode = hashedCodeValue
+            existingUser.verificationCodeValidation = Date.now()
+            await existingUser.save()
+            return res.status(200).json({
+                success: true,
+                message: 'Code Sent'
+            })
+        }
+        res.status(200).json({
+            success: failed,
+            message: 'Code Sent Failed'
+        })
+        
+
+    } catch (error) {
+        console.log(error)
+        
+    }
+}

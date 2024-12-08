@@ -1,12 +1,13 @@
-const express = require('express')
-const helmet = require('helmet')
-const cors = require('cors')
-const cookieParser = require('cookie-parser')
-const mongoose = require('mongoose')
+import express from 'express';
+import helmet from 'helmet';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import mongoose from 'mongoose';
 const app = express()
-const authRouter = require('./routers/authRouter')
+import authRouter from './routers/authRouter.js';
+import dotenv from 'dotenv';
 
-require('dotenv').config()
+dotenv.config()
 
 app.use(cors())
 app.use(helmet())

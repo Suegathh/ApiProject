@@ -1,5 +1,5 @@
-const { string } = require('joi')
-const mongoose = require('mongoose')
+
+import mongoose from 'mongoose';
 
 const userSchema = mongoose.Schema({
     email: {
@@ -12,7 +12,7 @@ const userSchema = mongoose.Schema({
     },
     password: {
         type: String,
-        required: [true, 'passwrd must be provided'],
+        required: [true, 'password must be provided'],
         trim: true,
         select: false,
     },
@@ -37,6 +37,6 @@ const userSchema = mongoose.Schema({
         select: false
     },
 }, {
-    timestamp: true
+   timestamps: true,
 })
-module.exports = mongoose.model('User', userSchema)
+export default mongoose.model('User', userSchema);
